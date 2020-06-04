@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>{{ error|escape }}</strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ error|escape }}</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if form %}
+            <form method="post">
+                {% csrf_token %}
+                {% if user.is_authenticated %}
+                    <label>Email: </label>
+                    <p> {{user.email}} <a href="{% url 'account_email' %}">Change E-mail</a></p>
+                {% endif %}
+                {% crispy form %}
+            </form>
+        {% elif profile %}
+        <div>
+            <div class="row justify-content-center">
+                <div id="accordion" style="width: 95%;">
+                    <div class="card shadow">
+                        <div class="card-header" id="headingOne">
+                            <h4 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                Profile
+                            </button>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body center">
+                                <p>Email : {{ profile.user.email }} <a href="{% url 'account_email' %}">Change E-mail</a></p>
+                                <p>Name : {{ profile.first_name }} {{ profile.last_name }}</p>
+                                <p>Gender : {{ profile.gender }} </p>
+                                <p>Birthday : {{profile.birthday }}</p>
+                                <p>Phone : {{profile.phone}} </p>
+                                <p>Area : {{profile.area}} </p>
+                                <p>City : {{profile.city}} </p>
+                                <p>Country : {{profile.country}} </p>
+                                <p>Sports : {% for i in profile.sport.all %} {{i.sport}} {% endfor %}</p>
+                                <p><a href="{% url 'account_change_password' %}">Change Password</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-header" id="headingTwo">
+                            <h4 class="mb-0">
+                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Upcoming Events
+                                </button>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div class="card-body center">
+                                {% if upcoming_events %}
+                                    <h4>Individual Events</h4>
+                                    {% for i in upcoming_events %}
+                                        <a href="{% url 'event' i.id %}"><img src="{{i.banner.url}}" style="width:90%; height: auto"></a>
+                                        <div class="row">
+                                            <div class="col">
+                                                <p> {{ i.title }} </p>
+                                                <p> {{ i.date }} {{ i.time }} </p>
+                                                <p> {{i.location }} </p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                <display>You are not currently registered to any event.</display>
+                                {% endif %}
+                                {% if team_events %}
+                                    <h4>Team Events</h4>
+                                    {% for i in team_events %}
+                                        <a href="{% url 'event' i.id %}"><img src="{{i.banner.url}}" style="width:90%; height: auto"></a>
+                                        <div class="row">
+                                            <div class="col">
+                                                <p> {{ i.title }} </p>
+                                                <p> {{ i.date }} {{ i.time }} </p>
+                                                <p> {{i.location }} </p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                <display>No team events</display>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-header" id="headingThree">
+                            <h4 class="mb-0">
+                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Past Events
+                                </button>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                            <div class="card-body center">
+                                {% if passt_events %}
+                                    {% for i in past_events %}
+                                        <img src="{{i.banner.url}}" style="width:100%; height: auto">
+                                        <p> {{ i.title }} </p>
+                                        <p> {{ i.date }} {{ i.time }} </p>
+                                        <p> {{i.location }} </p>
+                                    {% endfor %}
+                                {% else %}
+                                <display>You have not participated in any events.</display>
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-header" id="headingFive">
+                            <h4 class="mb-0">
+                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseThree">
+                                Teams
+                                </button>
+                            </h4>
+                        </div>
+                        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
+                            <div class="card-body center">
+                                {% if managed_teams %}
+                                    <h4> Managed Teams </h4>
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <td class="text-left">
+                                                    Team Name
+                                                </td>
+                                                <td class=text-right>
+                                                    Team Sports
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for i in managed_teams %}
+                                                <tr>
+                                                    <td class="text-left">
+                                                        {% if i.logo %}
+                                                            <img src="{{i.logo.url}}" class="team_logo">
+                                                            &nbsp
+                                                        {% endif %}
+                                                        <a href="{% url 'team_view' i.id %}">
+                                                            {{ i.name }}
+                                                        </a>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ i.sport }}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                <display> You are not managing any teams.</display>
+                                {% endif %}
+                                {% if teams %}
+                                    <h4> Teams </h4>
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <td class="text-left">
+                                                    Team Name
+                                                </td>
+                                                <td class="text-right">
+                                                    Team Sports
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for i in teams %}
+                                                <tr>
+                                                    <td class="text-left">
+                                                        {% if i.logo %}
+                                                            <img src="{{i.logo.url}}" class="team_logo">
+                                                        {% endif %}
+                                                        &nbsp
+                                                        <a href="{% url 'team_view' i.id %}">
+                                                            {{ i.name }}
+                                                        </a>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ i.sport }}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                <display>You have not joined any teams.</display>
+                                {% endif %}
+                                <p>
+                                    <a href="{% url 'team_builder' %}"><button class="btn blue-button">Build a Team</button></a>
+                                    <a href="{% url 'teams' %}"><button class="btn blue-button">Join a Team</button></a>
+                                </p>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    
+{% endblock %}

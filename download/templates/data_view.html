@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+    {% block content %}
+    {% if staff %}
+        {% if events %}
+            <form method="post" id="event_data_download_form">
+                {% csrf_token %}
+                <select name="event_data">
+                {% for event in events %}
+                    <option value="{{ event.pk }}">{{ event.title }}</option>
+                {% endfor %}
+                </select>
+                <input type="submit">
+            </form>
+        {% endif %}
+    {% endif %}
+{% endblock %}

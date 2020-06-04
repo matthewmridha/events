@@ -48,12 +48,14 @@ INSTALLED_APPS = [
     # Local
     'users.apps.UsersConfig',
     'events.apps.EventsConfig',
-
+    'teams.apps.TeamsConfig',
+    'download.apps.DownloadConfig',
+    
     # Style
     'crispy_forms',
 ]
 
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -139,10 +141,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    
+    os.path.join(BASE_DIR, 'static'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
@@ -172,4 +176,5 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 LOGIN_REDIRECT_URL = 'home'
+SIGNUP_REDIRECT_URL = 'profileView'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'home'
